@@ -1,0 +1,62 @@
+/* Оформление таблиц админки */
+.admin-container {
+  @apply max-w-7xl mx-auto pb-10;
+}
+
+.admin-header {
+  @apply text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-color)] to-purple-500;
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.2));
+}
+
+.admin-table-wrapper {
+  @apply rounded-xl overflow-hidden shadow-2xl;
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+}
+
+.admin-table {
+  @apply w-full text-left border-collapse;
+}
+
+.admin-table thead {
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--accent-color);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+.admin-table th, .admin-table td {
+  @apply p-4 border-b border-[var(--glass-border)];
+}
+
+.admin-table tbody tr:hover {
+  background: rgba(56, 189, 248, 0.05);
+}
+
+.status-badge {
+  @apply px-3 py-1 rounded-full text-xs font-bold uppercase;
+}
+.status-new { @apply bg-blue-500/20 text-blue-400; }
+.status-completed { @apply bg-green-500/20 text-green-400; }
+.status-in-progress { @apply bg-yellow-500/20 text-yellow-400; }
+.status-canceled { @apply bg-red-500/20 text-red-400; }
+
+.admin-grid-menu {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.admin-card {
+  @apply p-6 rounded-2xl flex flex-col items-center justify-center gap-4 cursor-pointer transition-all duration-300;
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  height: 200px;
+}
+
+.admin-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-color);
+  box-shadow: 0 10px 30px -10px var(--accent-color);
+}

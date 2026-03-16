@@ -1,0 +1,64 @@
+/* src/styles/pages.css */
+
+/* --- Типографика (Неон) --- */
+.neon-title {
+  @apply text-5xl md:text-7xl font-bold mb-6 text-center;
+  background: linear-gradient(90deg, #fff, #00f3ff, #bc13fe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba(188, 19, 254, 0.4));
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-neon-blue to-white;
+}
+
+/* --- Стеклянные панели --- */
+.glass-panel {
+  @apply backdrop-blur-xl border border-white/10 rounded-2xl p-8 transition-all duration-300;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+.glass-panel:hover {
+  border-color: rgba(0, 243, 255, 0.3);
+  box-shadow: 0 0 30px rgba(0, 243, 255, 0.15);
+  transform: translateY(-5px);
+}
+
+/* --- Hero секция --- */
+.hero-img {
+  @apply w-full h-full object-cover transition-transform duration-700 hover:scale-105;
+}
+
+/* --- Грид фич --- */
+.feature-grid {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-8 py-10 px-4 max-w-7xl mx-auto relative z-10;
+}
+
+.feature-icon {
+  @apply w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto;
+  background: rgba(0, 243, 255, 0.1);
+  border: 1px solid rgba(0, 243, 255, 0.2);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+}
+
+/* --- Карта --- */
+.map-frame {
+  @apply w-full h-[400px] rounded-xl overflow-hidden border border-white/10 relative;
+  filter: grayscale(100%) invert(100%) contrast(1.2);
+  transition: filter 0.5s ease;
+}
+
+.map-frame:hover {
+  filter: grayscale(0%) invert(0%);
+}
+
+/* --- Инпуты контактов --- */
+.contact-input {
+  @apply w-full bg-black/40 border border-white/10 rounded-lg p-4 text-white outline-none transition-all duration-300;
+}
+
+.contact-input:focus {
+  @apply border-neon-blue shadow-[0_0_15px_rgba(0,243,255,0.3)];
+}

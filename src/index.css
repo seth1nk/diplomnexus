@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+@import "./styles/admin.css";
+@import "./styles/pages.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ТЕМНАЯ ТЕМА (Deep Space) */
+  --bg-color: #0b0c15;
+  --text-color: #f1f5f9;
+  --glass-bg: rgba(20, 20, 30, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --accent-color: #00f3ff;
+  --card-bg: #13141f;
+  --shadow-color: rgba(0, 243, 255, 0.1);
+  --map-filter: grayscale(100%) invert(100%) contrast(1.2); /* Делаем карту темной */
+  --input-bg: rgba(15, 23, 42, 0.6); 
+}
+
+body.light {
+  /* СВЕТЛАЯ ТЕМА (Tech Lab) */
+  --bg-color: #f0f2f5;
+  --text-color: #1a1c23;
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --accent-color: #2563eb;
+  --card-bg: #ffffff;
+  --input-bg: rgba(255, 255, 255, 0.9);
+  --shadow-color: rgba(37, 99, 235, 0.15);
+  --map-filter: grayscale(0%) invert(0%); /* Обычная карта */
+}
+
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+  transition: background 0.4s ease, color 0.4s ease;
+  overflow-x: hidden;
+}
+
+/* Скроллбар */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 10px; }
+
+/* Эффект стекла (Без рамок, только тень и блюр) */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 var(--shadow-color);
+}
+
+/* Кнопка */
+.btn-neon {
+  background: linear-gradient(135deg, var(--accent-color), #8b5cf6);
+  color: white;
+  font-weight: 700;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px var(--shadow-color);
+  position: relative;
+  overflow: hidden;
+}
+.btn-neon:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px var(--shadow-color);
+}
+
+/* --- СТИЛИ ДЛЯ КОМПОНЕНТОВ UIVERSE (Вставляем сюда, чтобы работали в Dashboard) --- */
+
+/* 1. NEON CARD */
+.uiverse-card {
+  width: 100%; height: 320px;
+  background: var(--card-bg);
+  position: relative; display: flex; place-content: center; place-items: center;
+  overflow: hidden; border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+.uiverse-card::before {
+  content: ''; position: absolute; width: 100px;
+  background-image: linear-gradient(180deg, var(--accent-color), #bc13fe);
+  height: 150%; animation: rotBGimg 4s linear infinite; transition: all 0.2s linear;
+}
+@keyframes rotBGimg { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.uiverse-card::after {
+  content: ''; position: absolute; background: var(--card-bg); inset: 3px; border-radius: 18px;
+}
+.uiverse-card-content {
+  position: absolute; z-index: 10; width: 92%; height: 92%;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+
+/* 2. CYBER SWITCH */
+.cyber-switch { font-size: 14px; position: relative; display: inline-block; width: 3.5em; height: 2em; }
+.cyber-switch input { opacity: 0; width: 0; height: 0; }
+.cyber-slider {
+  position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #1a1a2e; transition: .4s; border-radius: 10px;
+  border: 1px solid var(--accent-color);
+}
+.cyber-slider:before {
+  position: absolute; content: ""; height: 1.4em; width: 1.4em; left: 0.3em; bottom: 0.25em;
+  background-color: var(--accent-color); transition: .4s; border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent-color);
+}
+.cyber-switch input:checked + .cyber-slider { background-color: var(--accent-color); border-color: white; }
+.cyber-switch input:checked + .cyber-slider:before {
+  transform: translateX(1.5em); background-color: white; box-shadow: none;
+}
+/* Обновленный класс для инпутов */
+.contact-input {
+  width: 100%;
+  background-color: var(--input-bg); /* Используем переменную */
+  border: 1px solid var(--glass-border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  color: var(--text-color);
+  outline: none;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.contact-input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 4px rgba(var(--accent-color), 0.1); /* Свечение */
+  background-color: var(--card-bg);
+}
+
+/* Плейсхолдеры */
+.contact-input::placeholder {
+  color: var(--text-color);
+  opacity: 0.5;
+}
+@keyframes scan {
+  0% { transform: translateY(-50%); }
+  100% { transform: translateY(50%); }
+}
+
+.animate-scan {
+  animation: scan 2s linear infinite;
+}
