@@ -61,7 +61,6 @@ const Dashboard = ({ user }) => {
     setCurrentPage(1);
   }, [selectedCat]);
 
-  // Логика отображения кнопок пагинации (не более 12)
   const getPaginationGroup = (totalPages) => {
     let start = Math.max(1, currentPage - 5);
     let end = Math.min(totalPages, start + 11);
@@ -103,7 +102,7 @@ const Dashboard = ({ user }) => {
     if (orders.length < 5) return orders; 
     const res = [];
     for (let i = 0; i < 5; i++) {
-      res.push(orders[(orderIndex + i) % orders.length]);
+      result.push(orders[(orderIndex + i) % orders.length]);
     }
     return res;
   })();
@@ -122,10 +121,17 @@ const Dashboard = ({ user }) => {
           <p className="text-[var(--text-color)] opacity-60 font-mono text-sm uppercase">:: OPERATOR: {user?.name} :: ONLINE</p>
         </div>
 
+        {/* ФИЛЬТРЫ КАТЕГОРИЙ (ИСПРАВЛЕНО: text-white) */}
         <div className="flex flex-wrap gap-2">
           {categoryMap.map(cat => (
-            <button key={cat.value} onClick={() => setSelectedCat(cat.value)}
-              className={`px-6 py-2.5 rounded-xl font-bold text-[11px] uppercase tracking-widest transition-all border ${selectedCat === cat.value ? 'bg-[var(--accent-color)] text-black border-[var(--accent-color)] shadow-[0_0_20px_rgba(var(--accent-color),0.4)]' : 'glass text-[var(--text-color)] hover:bg-white/5 border-[var(--glass-border)]'}`}
+            <button 
+              key={cat.value} 
+              onClick={() => setSelectedCat(cat.value)}
+              className={`px-6 py-2.5 rounded-xl font-bold text-[11px] uppercase tracking-widest transition-all border ${
+                selectedCat === cat.value 
+                ? 'bg-[var(--accent-color)] text-white border-[var(--accent-color)] shadow-[0_0_20px_rgba(var(--accent-color),0.4)]' 
+                : 'glass text-[var(--text-color)] hover:bg-white/5 border-[var(--glass-border)]'
+              }`}
             >
               {cat.label}
             </button>
@@ -133,10 +139,7 @@ const Dashboard = ({ user }) => {
         </div>
       </div>
       
-      {/* GRID LAYOUT: Стабильная ширина */}
       <div className="flex flex-col xl:flex-row gap-8 items-start">
-        
-        {/* КАТАЛОГ */}
         <div className="flex-1 w-full min-w-0">
           <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
             <AnimatePresence mode='wait'>
@@ -154,7 +157,7 @@ const Dashboard = ({ user }) => {
                        <h3 className="font-black text-lg text-[var(--text-color)] uppercase leading-none truncate">{item.name}</h3>
                        <p className="text-xs text-[var(--text-color)] opacity-50 mt-2 line-clamp-2 h-8">{item.description}</p>
                     </div>
-                    <button onClick={() => addToCart(item)} className="mt-4 w-full py-3 rounded-xl bg-[var(--accent-color)]/10 text-[var(--accent-color)] font-bold text-xs tracking-[0.2em] border border-[var(--accent-color)]/20 hover:bg-[var(--accent-color)] hover:text-black transition-all">
+                    <button onClick={() => addToCart(item)} className="mt-4 w-full py-3 rounded-xl bg-[var(--accent-color)]/10 text-[var(--accent-color)] font-bold text-xs tracking-[0.2em] border border-[var(--accent-color)]/20 hover:bg-[var(--accent-color)] hover:text-white transition-all">
                       {cart.some(c => c.id === item.id && c.category === item.category) ? 'В ХРАНИЛИЩЕ' : 'ИНТЕГРИРОВАТЬ'}
                     </button>
                   </div>
@@ -163,13 +166,23 @@ const Dashboard = ({ user }) => {
             </AnimatePresence>
           </div>
 
-          {/* ОГРАНИЧЕННАЯ ПАГИНАЦИЯ (МАКСИМУМ 12 КНОПОК) */}
+          {/* ПАГИНАЦИЯ (ИСПРАВЛЕНО: text-white) */}
           {totalPages > 1 && (
             <div className="flex justify-center items-center gap-2 mt-10">
               <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="p-3 glass rounded-xl hover:text-[var(--accent-color)] disabled:opacity-20"><ArrowLeft size={20}/></button>
               <div className="flex gap-1 overflow-hidden">
                 {getPaginationGroup(totalPages).map((i) => (
-                  <button key={i} onClick={() => setCurrentPage(i)} className={`w-10 h-10 shrink-0 rounded-xl font-bold font-mono transition-all ${currentPage === i ? 'bg-[var(--accent-color)] text-black shadow-[0_0_15px_var(--accent-color)]' : 'glass opacity-50 hover:opacity-100'}`}>{i}</button>
+                  <button 
+                    key={i} 
+                    onClick={() => setCurrentPage(i)} 
+                    className={`w-10 h-10 shrink-0 rounded-xl font-bold font-mono transition-all ${
+                      currentPage === i 
+                      ? 'bg-[var(--accent-color)] text-white shadow-[0_0_15px_var(--accent-color)]' 
+                      : 'glass text-[var(--text-color)] opacity-50 hover:opacity-100'
+                    }`}
+                  >
+                    {i}
+                  </button>
                 ))}
               </div>
               <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="p-3 glass rounded-xl hover:text-[var(--accent-color)] disabled:opacity-20"><ArrowRight size={20}/></button>
@@ -177,7 +190,6 @@ const Dashboard = ({ user }) => {
           )}
         </div>
 
-        {/* КОРЗИНА: Фиксированная ширина xl:w-[400px] */}
         <aside className="w-full xl:w-[400px] shrink-0">
           <div className="glass p-6 rounded-[2rem] sticky top-28 border border-[var(--glass-border)] shadow-2xl">
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-[var(--glass-border)]">
@@ -202,13 +214,13 @@ const Dashboard = ({ user }) => {
             </div>
             <div className="border-t border-[var(--glass-border)] pt-5">
               <div className="flex justify-between mb-6 items-end"><span className="text-[var(--text-color)] opacity-40 font-bold text-[10px] uppercase tracking-widest">Итого</span><span className="text-2xl font-black text-[var(--accent-color)] font-mono">{cart.reduce((a, c) => a + c.price * c.qty, 0).toLocaleString()} ₽</span></div>
-              <button onClick={handlePayment} disabled={cart.length === 0} className="w-full py-5 bg-[var(--accent-color)] text-black font-black tracking-[0.3em] rounded-2xl uppercase text-[11px] shadow-[0_0_30px_rgba(var(--accent-color),0.4)] transition-all flex justify-center items-center gap-3 disabled:opacity-20"><Cpu size={18} /> ИНИЦИАЛИЗАЦИЯ</button>
+              <button onClick={handlePayment} disabled={cart.length === 0} className="w-full py-5 bg-[var(--accent-color)] text-white font-black tracking-[0.3em] rounded-2xl uppercase text-[11px] shadow-[0_0_30px_rgba(var(--accent-color),0.4)] transition-all flex justify-center items-center gap-3 disabled:opacity-20"><Cpu size={18} /> ИНИЦИАЛИЗАЦИЯ</button>
             </div>
           </div>
         </aside>
       </div>
 
-      {/* НИЖНЯЯ КАРУСЕЛЬ ЗАКАЗОВ */}
+      {/* НИЖНЯЯ КАРУСЕЛЬ */}
       {orders.length > 0 && (
         <div className="mt-20 border-t border-[var(--glass-border)] pt-12" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
           <div className="flex justify-between items-center mb-8 px-4">
@@ -227,7 +239,9 @@ const Dashboard = ({ user }) => {
                     <div className={`absolute top-0 left-0 w-1.5 h-full ${order.status === 'completed' ? 'bg-green-500 shadow-[0_0_10px_#22c55e]' : 'bg-blue-500 shadow-[0_0_10px_#3b82f6]'}`} />
                     <div className="flex justify-between items-start mb-4"><span className="font-mono text-[10px] px-2 py-1 rounded bg-white/5 border border-white/10 opacity-60">#{order.order_number}</span><span className="font-bold text-lg text-[var(--text-color)]">{order.total}₽</span></div>
                     <p className="text-xs text-[var(--text-color)] opacity-70 font-bold line-clamp-3 mb-4">{order.content}</p>
-                    <Status status={order.status} date={new Date(order.created_at).toLocaleDateString()} />
+                    <div className="w-full mt-auto">
+                      <Status status={order.status} date={new Date(order.created_at).toLocaleDateString()} />
+                    </div>
                  </motion.div>
                ))}
              </AnimatePresence>
