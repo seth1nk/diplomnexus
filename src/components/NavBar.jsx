@@ -136,7 +136,7 @@ const NavBar = ({ user, onLogin, onLogout }) => {
                       <div className="w-px h-8 bg-[var(--glass-border)] mx-1" /> 
                       <div className="flex items-center gap-2">
                         <span className={`text-[8px] font-black tracking-widest opacity-70 hidden xl:block ${adminColorClass}`}>
-                            ADMIN_DB:
+                            ADMIN:
                         </span>
                         {renderMenu(adminManagementLinks)}
                       </div>
