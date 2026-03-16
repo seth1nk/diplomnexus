@@ -26,32 +26,31 @@ const NavBar = ({ user, onLogin, onLogout }) => {
   const location = useLocation();
 
   const isAdmin = user?.role === 'admin';
-  const menuLabel = isAdmin ? 'ADMIN PANEL:' : 'OPERATOR:';
   const roleLabel = isAdmin ? 'ADMIN' : 'OPERATOR';
   const roleColorClass = isAdmin ? 'text-red-500' : 'text-[var(--accent-color)]';
-  const menuLabelColorClass = isAdmin ? 'text-red-500' : 'text-[var(--accent-color)]';
+  const adminColorClass = 'text-red-500';
 
-  // --- ОБНОВЛЕННЫЕ ССЫЛКИ НА ТАБЛИЦЫ ---
-  const tableLinks = [
-    { path: '/users', label: 'ПОЛЬЗОВАТЕЛИ' },
-    { path: '/orders', label: 'ЗАКАЗЫ' },
-    { path: '/admin/hubs', label: 'ХАБЫ' },
-    { path: '/admin/cameras', label: 'КАМЕРЫ' },
-    { path: '/admin/lighting', label: 'СВЕТ' },
-    { path: '/admin/sensors', label: 'ДАТЧИКИ' },
-    { path: '/messages', label: 'ЧАТЫ' },
+  // --- 1. ТАБЛИЦЫ ОБОРУДОВАНИЯ (ЧИСТЫЕ ПУТИ ДЛЯ ВСЕХ) ---
+  const equipmentLinks = [
+    { path: '/hubs', label: 'ХАБЫ' },
+    { path: '/cameras', label: 'КАМЕРЫ' },
+    { path: '/lighting', label: 'СВЕТ' },
+    { path: '/sensors', label: 'ДАТЧИКИ' },
   ];
 
-  if (isAdmin) {
-    tableLinks.push({ path: '/admin/logs', label: 'ЛОГИ' });
-  }
+  // --- 2. ТАБЛИЦЫ УПРАВЛЕНИЯ (ТОЛЬКО АДМИНУ) ---
+  const adminManagementLinks = [
+    { path: '/users', label: 'ПОЛЬЗОВАТЕЛИ' },
+    { path: '/orders', label: 'ЗАКАЗЫ' },
+    { path: '/messages', label: 'ЧАТЫ' },
+    { path: '/admin/logs', label: 'ЛОГИ' },
+  ];
 
   useEffect(() => {
     document.body.className = theme;
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // ОПРОС НЕПРОЧИТАННЫХ
   useEffect(() => {
     if (user) {
         const checkUnread = async () => {
@@ -113,72 +112,56 @@ const NavBar = ({ user, onLogin, onLogout }) => {
       <nav className="fixed top-0 w-full z-50 glass h-24 flex items-center transition-all duration-300 border-b border-[var(--glass-border)]">
         <div className="max-w-[1900px] mx-auto px-6 w-full flex items-center justify-between gap-4">
           
-          {/* ЛОГОТИП */}
           <Link to="/" className="flex items-center gap-3 group shrink-0">
             <div className="p-2 bg-[var(--accent-color)]/10 rounded-lg border border-[var(--accent-color)]/30 group-hover:shadow-[0_0_20px_var(--accent-color)] transition-all">
               <Cpu className="text-[var(--accent-color)] w-6 h-6" />
             </div>
-            <span className="font-black text-2xl tracking-widest hidden 2xl:block text-[var(--text-color)]">
-              NEXUS
-            </span>
+            <span className="font-black text-2xl tracking-widest hidden 2xl:block text-[var(--text-color)]">NEXUS</span>
           </Link>
 
-          {/* ЦЕНТРАЛЬНАЯ ЧАСТЬ */}
           <div className="hidden lg:flex items-center gap-4 flex-1 justify-center">
-             
-             {/* 1. ОБЩЕЕ МЕНЮ */}
              {renderMenu(navLinks)}
              
              {user && (
                <>
                   <div className="w-px h-8 bg-[var(--glass-border)] mx-1" /> 
-                  
-                  {/* МЕНЮ КАТАЛОГА */}
                   {renderMenu(catalogLink)}
 
                   <div className="w-px h-8 bg-[var(--glass-border)] mx-1" /> 
+                  {/* Группа таблиц оборудования доступна всем авторизованным */}
+                  {renderMenu(equipmentLinks)}
 
-                  {/* МЕНЮ ТАБЛИЦ (4 НОВЫЕ ТАБЛИЦЫ ТУТ) */}
-                  <div className="flex items-center gap-2">
-                    <span className={`text-[8px] font-black tracking-widest opacity-70 hidden xl:block ${menuLabelColorClass}`}>
-                        {menuLabel}
-                    </span>
-                    {renderMenu(tableLinks)}
-                  </div>
+                  {isAdmin && (
+                    <>
+                      <div className="w-px h-8 bg-[var(--glass-border)] mx-1" /> 
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[8px] font-black tracking-widest opacity-70 hidden xl:block ${adminColorClass}`}>
+                            ADMIN_DB:
+                        </span>
+                        {renderMenu(adminManagementLinks)}
+                      </div>
+                    </>
+                  )}
                </>
              )}
           </div>
 
-          {/* ПРАВАЯ ЧАСТЬ */}
           <div className="flex items-center gap-4 shrink-0">
-            
             <div className="scale-75 origin-right hidden sm:block">
                <LightDark toggleTheme={toggleTheme} isLight={theme === 'light'} />
             </div>
 
             {user ? (
               <div className="flex items-center gap-4 pl-4 border-l border-[var(--glass-border)]">
-                
-                {/* ЧАТ */}
-                <button 
-                    onClick={() => { setIsChatOpen(!isChatOpen); setUnreadCount(0); }} 
-                    className={`p-2 rounded-full transition-all duration-300 relative ${isChatOpen ? 'bg-[var(--accent-color)] text-black' : 'text-[var(--text-color)] hover:text-[var(--accent-color)] bg-[var(--accent-color)]/10'}`} 
-                >
+                <button onClick={() => { setIsChatOpen(!isChatOpen); setUnreadCount(0); }} 
+                        className={`p-2 rounded-full transition-all duration-300 relative ${isChatOpen ? 'bg-[var(--accent-color)] text-black' : 'text-[var(--text-color)] hover:text-[var(--accent-color)] bg-[var(--accent-color)]/10'}`}>
                   <MessageCircle size={18} />
-                    {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_red]" />
-                    )}
+                  {unreadCount > 0 && <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_red]" />}
                 </button>
 
-                {/* ПРОФИЛЬ */}
-                <div 
-                  onClick={() => navigate('/kabinet')}
-                  className="flex items-center gap-3 cursor-pointer group"
-                >
+                <div onClick={() => navigate('/kabinet')} className="flex items-center gap-3 cursor-pointer group">
                   <div className="text-right hidden sm:block">
-                    <span className={`text-[8px] uppercase block font-black tracking-widest transition-colors ${roleColorClass}`}>
-                      {roleLabel}
-                    </span>
+                    <span className={`text-[8px] uppercase block font-black tracking-widest transition-colors ${roleColorClass}`}>{roleLabel}</span>
                     <span className="text-xs font-bold block leading-none text-[var(--text-color)]">{user.name}</span>
                   </div>
                   <UserAvatar user={user} className="w-9 h-9 rounded-full border border-transparent group-hover:border-[var(--accent-color)] transition-all" />
@@ -189,21 +172,15 @@ const NavBar = ({ user, onLogin, onLogout }) => {
                 </button>
               </div>
             ) : (
-              <button onClick={onLogin} className="btn-neon text-[10px] font-bold px-5 py-3 flex items-center gap-2 shadow-lg tracking-widest">
-                <User size={14}/> ВОЙТИ
+              <button onClick={onLogin} className="btn-neon text-[10px] font-bold px-5 py-3 flex items-center gap-2 shadow-lg tracking-widest uppercase">
+                <User size={14}/> Войти
               </button>
             )}
           </div>
         </div>
       </nav>
 
-      {user && (
-        <SupportChat 
-          isOpen={isChatOpen} 
-          onClose={() => setIsChatOpen(false)} 
-          user={user} 
-        />
-      )}
+      {user && <SupportChat isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} user={user} />}
     </>
   );
 };
