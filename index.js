@@ -65,7 +65,7 @@ const pool = new Pool({
   user: 'diplomreact',
   host: 'apt142.ru',
   database: 'diplomreact_db',
-  password: 'acAB39b218',
+  password: 'a9B2b1CcA8',
   port: 5432,
 });
 // Список новых таблиц товаров
