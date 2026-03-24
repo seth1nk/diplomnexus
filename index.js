@@ -96,7 +96,23 @@ async function sendTelegramMessage(chatId, text, keyboard = null) {
 (async () => {
   const client = await pool.connect();
   try {
-    console.log("🛠 Создание новых таблиц товаров...");
+    console.log("🛠 Инициализация структуры базы данных...");
+
+    // 1. Создаем таблицу пользователей
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255),
+        name VARCHAR(255),
+        role VARCHAR(50) DEFAULT 'user',
+        status VARCHAR(50) DEFAULT 'active',
+        referral_code VARCHAR(100),
+        picture TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`);
+
+    // 2. Создаем таблицы товаров
     for (const table of TABLES) {
         await client.query(`
             CREATE TABLE IF NOT EXISTS ${table} (
@@ -110,13 +126,61 @@ async function sendTelegramMessage(chatId, text, keyboard = null) {
                 sku VARCHAR(50), 
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )`);
-    }    
-    // РАСКОММЕНТИРУЙ ЭТУ СТРОКУ:
+    }
+
+    // 3. Создаем таблицу заказов
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS orders (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+        order_number VARCHAR(50),
+        total DECIMAL(10,2),
+        content TEXT,
+        status VARCHAR(50) DEFAULT 'placed',
+        delivery_address TEXT,
+        payment_status VARCHAR(50) DEFAULT 'pending',
+        telegram_chat_id BIGINT,
+        telegram_username VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`);
+
+    // 4. Создаем таблицу сообщений (чат)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS messages (
+        id SERIAL PRIMARY KEY,
+        user_name VARCHAR(255),
+        email VARCHAR(255),
+        text TEXT,
+        subject VARCHAR(255),
+        is_admin BOOLEAN DEFAULT FALSE,
+        is_read BOOLEAN DEFAULT FALSE,
+        ip VARCHAR(50),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`);
+
+    // 5. Создаем таблицу логов
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS logs (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        username VARCHAR(255),
+        method VARCHAR(10),
+        url TEXT,
+        action TEXT,
+        ip VARCHAR(50),
+        status_code INTEGER,
+        details TEXT,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`);
+
+    console.log("✅ Все таблицы проверены/созданы.");
+    
+    // Теперь запускаем заполнение данными
     await seedDatabase(pool); 
-    console.log("✅ Инициализация БД завершена.");
+    console.log("✅ База данных готова к работе.");
     
   } catch(e) { 
-    console.error("❌ Ошибка инициализации:", e); 
+    console.error("❌ Ошибка инициализации БД:", e); 
   } finally { 
     client.release(); 
   }
